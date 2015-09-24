@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Worker POC</title>
+<style>
+#main {
+ /* simple box */
+ position:absolute;
+ left:0px;
+ top:8em;
+ width:250px;
+ line-height:3em;
+ 
+ border:1px solid #003366;
+ white-space:nowrap;
+ padding:0.5em;
+}
+</style>
+   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+	<h1>Demo of Using HTML5 Web Worker and AJAX</h1>
+	<p>This demo shows a simple JavaScript animation running in the main thread while passing a file path to a Web Worker so that the worker can make an Ajax request and process the JSON file in the background, return it back, and not block any UI.  I have added a setTimeout event to create some latency in the Web Worker as my JSON file is not big enough to see any impact.</p>
+	<p>Check out the source to see how it works.</p>
+	</div>
+	<div id="main" class="alert alert-danger">Simple JavaScript Animation Example</div>
+	<div id="worker" class="jumbotron"></div>
+<script>
+//simple JS Animation
+ function doMove() {
+  foo.style.left = parseInt(foo.style.left)+1+'px';
+  setTimeout(doMove,20); // call doMove in 20msec
+}
+//start the animation
+var foo = document.getElementById('main');
+foo.style.left = '0px';
+doMove(); // start animating
+ 
+
+//HTML5 Web Workers
+var worker = new Worker('worker.js');
+
+worker.addEventListener('message', function(e) {
+  //console.log('results: ', e.data);
+  document.getElementById("worker").textContent = e.data;
+}, false);
+
+worker.postMessage('test.json'); // Send filename to our worker.
+</script>
+</body>
+</html>
